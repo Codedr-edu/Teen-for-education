@@ -455,5 +455,9 @@ def student_dashboard():
     class_in_level = Class.query.filter(level=current_user.level).all()
     return render_template("student_dashboard.html", teen_balanced=teen, eth_balenced=eth, Class=class_in_level)
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
