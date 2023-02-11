@@ -169,12 +169,12 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                         Chính
                     </p>
                     <ul class="menu-list">
-                        <li><a href="#" class="is-active">Trang chủ</a></li>
-                        <li><a class="my text-light">Danh sách các lớp</a></li>
-                        <li><a href="" class="my text-light">Các lỗi của học sinh</a></li>
+                        <li><a href="{{url_for('teacher_dashboard'}}" class="is-active">Trang chủ</a></li>
+                        <li><a href="{{url_for('show_cls')}}" class="my text-light">Danh sách các lớp</a></li>
+                        <li><a href="{{url_for('teacher_fail_check')}}" class="my text-light">Các lỗi của học sinh</a></li>
                     </ul>
                     <p class="menu-label">
-                        Chuyển token/coin
+                        Mở rộng
                     </p>
                     <ul class="menu-list">
                         <li>
@@ -211,6 +211,15 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                     </div>
                 </section>
                 <div class="container">
+                    <br>
+                    <div class="columns">
+                        <div class="column"><a href="{{url_for('class_homework')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm bài tập về nhà</a></div>
+                        <div class="column"><a href="{{url_for('add_student')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm học sinh</a></div>
+                    </div>
                     <div class="col-md-12 rounded">
                             <table id="data" class="table shadow-lg table-striped rounded" style="background: #76b852;  /* fallback for old browsers */
 background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
@@ -225,6 +234,7 @@ backdrop-filter: blur(9.9px);
                                         <th class="text-light">Email</th>
                                         <th class="text-light">Địa chỉ ví</th>
                                         <th class="text-light">Chức năng</th>
+                                        <th class="text-light">Xóa học sinh</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-light">
@@ -234,9 +244,12 @@ backdrop-filter: blur(9.9px);
                                             <td class="text-light">{{ user.Class }}</td>
                                             <td class="text-light">{{ user.email }}</td>
                                             <td class="text-light">{{ user.address }}</td>
-                                            <td class="text-light"><a href="{{url_for('student_comment')}}" class="btn w-100" style="background: #76b852;  /* fallback for old browsers */
+                                            <td class="text-light"><a href="{{url_for('student_comment',id=id)}}" class="btn w-100" style="background: #76b852;  /* fallback for old browsers */
 background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
 background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Nhận xét</a></td>
+                                            <td class="text-light"><a href="{{url_for('delete_student',id=id)}}" class="btn w-100" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Xóa</a></td>
                                         </tr>
                                     {% endfor %}
                             </table>
