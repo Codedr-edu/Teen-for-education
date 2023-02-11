@@ -20,26 +20,25 @@ import json
 from web3.middleware import geth_poa_middleware
 from eth_account import Account
 import secrets
-import teenapi
 
 web3 = Web3(Web3.HTTPProvider('https://sepolia.infura.io/v3/8c4c9235b7ed489ab0bc8c26795ae24e'))
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 abi = json.loads('[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"_totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"a","type":"uint256"},{"name":"b","type":"uint256"}],"name":"safeSub","outputs":[{"name":"c","type":"uint256"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"a","type":"uint256"},{"name":"b","type":"uint256"}],"name":"safeDiv","outputs":[{"name":"c","type":"uint256"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"a","type":"uint256"},{"name":"b","type":"uint256"}],"name":"safeMul","outputs":[{"name":"c","type":"uint256"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"a","type":"uint256"},{"name":"b","type":"uint256"}],"name":"safeAdd","outputs":[{"name":"c","type":"uint256"}],"payable":false,"stateMutability":"pure","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"tokenOwner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Approval","type":"event"}]')
 contract = web3.eth.contract(address='0x2519019C7251545be7B81521951874B2c4948A56', abi=abi)
 
-views = Blueprint("views", __name__)
+db = SQLAlchemy()
 app = Flask(__name__, template_folder='template')
-app.config['SECRET_KEY'] = 'Hungtech-Teenagercoin-Site-System-2810'
+app.config['SECRET_KEY'] = 'Teen-for-education'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+views = Blueprint("views", __name__)
 bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 db.init_app(app)
 
-class Teacher(UserMixin,db.model):
-    id = db.Column(db.Interger, primary_key = True)
+class Teacher(UserMixin,db.Model):
+    id = db.Column(db.Integer, primary_key = True)
     teacher_name = db.Column(db.String(15),nullable=False)
     email = db.Column(db.String(100),unique=True,nullable=False)
     subject = db.Column(db.String(45),nullable=False)
@@ -50,15 +49,15 @@ class Teacher(UserMixin,db.model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-class Student(UserMixin,db.model):
-    id = db.Column(db.Interger, primary_key=True)
+class Student(UserMixin,db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     student_name = db.Column(db.String(15),nullable=False)
     email = db.Column(db.String(100), unique=True,nullable=False)
     Class = db.Column(db.String(10),nullable=False)#db.relationship('Class', backref='article', lazy=True)
     cls_id = db.Column(db.Integer,nullable=False)
     address = db.Column(db.String, unique=True)
-    present = db.Column(db.Interger)
-    absent = db.Column(db.Interger)
+    present = db.Column(db.Integer)
+    absent = db.Column(db.Integer)
     password = db.Column(db.String(80),nullable=False)
 
     def __repr__(self):
@@ -81,8 +80,9 @@ class Homework(db.Model):
     name = db.Column(db.String(10000),nullable=False)
     mark = db.Column(db.String(2))
     present = db.Column(db.String(1000))
-    cls_id = db.Column(db.String(10),nullable=False)
+    cls_id = db.Column(db.Integer,nullable=False)
     by = db.Column(db.String(100), nullable=False)
+    by_id = db.Column(db.Integer)
 
 
 class Comment(db.Model):
@@ -92,6 +92,7 @@ class Comment(db.Model):
     present = db.Column(db.String(100))
     by = db.Column(db.String(100),nullable=False)
     std_id = db.Column(db.Integer,nullable=False)
+    by_id = db.Column(db.Integer)
 
 class Fail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -158,84 +159,75 @@ def teacher_register():
         db.session.add(new_user)  # tạo user 2
         db.session.commit()  # commit user
         login_user(new_user)  # đăng nhập tài khoản
-        return redirect(url_for('private_key', private=private_key))
+        return redirect(url_for('private_key', private=private_key, name=name, password=hashpass,email=email,address=acct.address))
     return render_template('teacher_signup.html')
 
 @login_required
 @app.route('/private/key/<private>')
-def private_key(private):
-    if current_user.is_authenticated:
-        pass
-    else:
-        return redirect(url_for('index'))
-    return render_template("private_key.html", private_key=private)  # biến trên front-end = biến trên back-end
+def private_key(private,name,password,email,address):
+    link = "https://teenownsystem.pythonanywhere.com/transfer/tfe/" + str(name) + '/' + str(password) + '/' + str(email) + '/' + str(address)
+    return render_template("private_key.html", private_key = private, link = link) # biến trên front-end = biến trên back-end
 
-@app.route('login/<email>')
+@app.route('/login/<email>')
 def login_again(email):
-    login = Teacher.query.filter_by(email=email).first()
-    if login:
-        login_user(login)
+    if current_user.is_authenticated:
         return redirect(url_for("dashboard"))
+    else:
+        login = Teacher.query.filter_by(email=email).first()
+        if login:
+            login_user(login)
+            return redirect(url_for("dashboard"))
 
 @login_required
 @app.route('/teacher/dashboard')
 def teacher_dashboard():
-    if current_user.is_authenticated:
-        teen = float(web3.toWei(contract.functions.balanceOf(current_user.address).call(),'ether'))
-        eth = float(web3.toWei(web3.eth.getBalance(current_user.address), 'ether'))
-        class_in_level = Class.query.filter(level=current_user.level).all()
-    else:
-        return redirect(url_for('index'))
+    teen = float(web3.toWei(contract.functions.balanceOf(current_user.address).call(),'ether'))
+    eth = float(web3.toWei(web3.eth.getBalance(current_user.address), 'ether'))
+    class_in_level = Class.query.filter(level=current_user.level).all()
     return render_template("teacher_dashboard.html",teen_balanced=teen,eth_balenced=eth,Class=class_in_level)
 
 @login_required
 @app.route('/class/<Class>')
 def Class_check(Class):
-    if current_user.is_authenticated:
-        Std = Student.query.filter(Class=Class).all()
-    else:
-        return redirect(url_for('index'))
-    return render_template("class.html", student=Std)
+    Std = Student.query.filter(Class=Class).all()
+    return render_template("class.html",users=Std)
 
 @login_required
 @app.route('/student/comment/<id>',methods=["GET","POST"])
 def student_comment(id):
-    if current_user.is_authenticated:
-        std = Student.query.filter(id=int(id)).first()
-        form = st_comment()
-        fail = Fail.query.filter(std_id=int(id)).first()
-        if form.validate_on_submit():
-            atendent = form.atendent.data
-            comment = form.comment.data
-            present = form.present.data
-            private = form.priv.data
-            if "có" in atendent:
-                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present), by=current_user.teacher_name, std_id=std.id)
-                db.session.add(new_cmt)
-                std.present += 1
-                db.session.commit()
-                if fail:
-                    pass
-                else:
-                    if present > 0:
-                        return redirect("https://teenownsystem.pythonanywhere.com/"+str(present)+"/"+str(std.address)+"/"+str(private))
-                    else:
-                        return redirect(url_for('teacher_dashboard'))
+    std = Student.query.filter(id=int(id)).first()
+    form = st_comment()
+    fail = Fail.query.filter(std_id=int(id)).first()
+    if form.validate_on_submit():
+        atendent = form.atendent.data
+        comment = form.comment.data
+        present = form.present.data
+        private = form.priv.data
+        if "có" in atendent:
+            new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present), by=current_user.teacher_name, std_id=std.id, by_id=current_user.id)
+            db.session.add(new_cmt)
+            std.present += 1
+            db.session.commit()
+            if fail:
+                pass
             else:
-                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present),by=current_user.teacher_name, std_id=std.id)
-                db.session.add(new_cmt)
-                std.absent += 1
-                db.session.commit()
-                if fail:
-                    pass
+                if present > 0:
+                    return redirect("https://teenownsystem.pythonanywhere.com/"+str(present)+"/"+str(std.address)+"/"+str(private))
                 else:
-                    if present > 0:
-                        return redirect(
-                            "https://teenownsystem.pythonanywhere.com/" + str(present) + "/" + str(std.address) + "/" + str(private))
-                    else:
-                        return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('index'))
+                    return redirect(url_for('teacher_dashboard'))
+        else:
+            new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present),by=current_user.teacher_name, std_id=std.id,by_id=current_user.id)
+            db.session.add(new_cmt)
+            std.absent += 1
+            db.session.commit()
+            if fail:
+                pass
+            else:
+                if present > 0:
+                    return redirect(
+                        "https://teenownsystem.pythonanywhere.com/" + str(present) + "/" + str(std.address) + "/" + str(private))
+                else:
+                    return redirect(url_for('teacher_dashboard'))
     return render_template('cmt.html', form=form)
 
 @login_required
@@ -247,7 +239,7 @@ def class_homework(id):
         name = form.name.data
         mark = form.mark.data
         present = form.present.data
-        new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), class_id=cls.id,by=current_user.teacher_name)
+        new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), class_id=cls.id,by=current_user.teacher_name,by_id=current_user.id)
         db.session.add(new_hwk)
         db.session.commit()
     return render_template('hw.html',form=form)
@@ -279,11 +271,8 @@ def fail_id(std_id):
 @login_required
 @app.route('/student/fail/delete/<id>')
 def fail_delete(id):
-    if current_user.is_authenticated:
-        Fail.query.filter(id=id).delete()
-        db.session.commit()
-    else:
-        return redirect(url_for('index'))
+    Fail.query.filter(id=id).delete()
+    db.session.commit()
 
 @app.route('/teacher/login', methods=['GET','POST'])
 def teacher_login():
@@ -317,210 +306,173 @@ def student_login():
             login_user(user)# đăng nhập tài khoản
             return redirect(url_for('student_dashboard'))
 
-    return render_template('login.html')
+    return render_template('stu_login.html')
 
 @login_required
 @app.route('/add/student',methods=['GET','POST'])
 def add_student():
-    if current_user.is_authenticated:
-        if request.method == 'POST':
-            name = request.form.get('name')
-            Class = request.form.get('class')
-            email = request.form.get('email')
-            address = request.form.get('address')
-            password = request.form.get('password')
-            cls_id = request.form.get('ID lớp')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        Class = request.form.get('class')
+        email = request.form.get('email')
+        address = request.form.get('address')
+        password = request.form.get('password')
+        cls_id = request.form.get('ID lớp')
 
-            new_student = Student(student_name=name, email=email, Class=Class, address=address, password=password, cls_id=cls_id)
-            db.session.add(new_student)
-            db.session.commit()
+        new_student = Student(student_name=name, email=email, Class=Class, address=address, password=password, cls_id=cls_id)
+        db.session.add(new_student)
+        db.session.commit()
 
-            return redirect(url_for('student_dashboard'))
-    else:
-        return redirect(url_for('index'))
+        return redirect(url_for('student_dashboard'))
 
     return render_template('add_student.html')
 
 @login_required
 @app.route('/delete/student/<id>')
 def delete_student(id):
-    if current_user.is_authenticated:
-        Student.query.filter(id=int(id)).first().delete()
-        db.session.commit()
-    else:
-        return redirect(url_for('index'))
+    Student.query.filter(id=int(id)).first().delete()
+    db.session.commit()
 
 @login_required
 @app.route('/change/mail/teacher/<id>',methods=['GET','POST'])
 def teacher_change_mail(id):
-    if current_user.is_authenticated:
-        teacher = Teacher.query.filter(id=int(id)).first()
-        form = change_mail()
-        if form.validate_on_submit():
-            email = form.email.data
-            teacher.email = email
-            db.session.commit()
-            return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('index'))
+    teacher = Teacher.query.filter(id=int(id)).first()
+    form = change_mail()
+    if form.validate_on_submit():
+        email = form.email.data
+        teacher.email = email
+        db.session.commit()
+        return redirect(url_for('teacher_dashboard'))
     return render_template("change_mail.html", form=form)
 
 @login_required
 @app.route('/change/mail/student/<id>',methods=['GET','POST'])
 def student_change_mail(id):
-    if current_user.is_authenticated:
-        std = Student.query.filter(id=int(id)).first()
-        form = change_mail()
-        if form.validate_on_submit():
-            email = form.email.data
-            std.email = email
-            db.session.commit()
-            return redirect(url_for('student_dashboard'))
-    else:
-        return redirect(url_for('index'))
+    std = Student.query.filter(id=int(id)).first()
+    form = change_mail()
+    if form.validate_on_submit():
+        email = form.email.data
+        std.email = email
+        db.session.commit()
+        return redirect(url_for('student_dashboard'))
     return render_template("change_mail.html", form=form)
 
 @login_required
 @app.route('/change/password/teacher/<id>',methods=['GET','POST'])
 def teacher_change_pass(id):
-    if current_user.is_authenticated:
-        teacher = Teacher.query.filter(id=int(id)).first()
-        form = change_password()
-        if form.validate_on_submit():
-            password = form.email.data
-            teacher.email = password
-            db.session.commit()
-            return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('index'))
+    teacher = Teacher.query.filter(id=int(id)).first()
+    form = change_password()
+    if form.validate_on_submit():
+        password = form.email.data
+        teacher.email = password
+        db.session.commit()
+        return redirect(url_for('teacher_dashboard'))
     return render_template("change_password.html", form=form)
 
 @login_required
 @app.route('/change/password/student/<id>',methods=['GET','POST'])
 def student_change_pass(id):
+    std = Student.query.filter(id=int(id)).first()
     form = change_password()
-    if current_user.is_authenticated:
-        std = Student.query.filter(id=int(id)).first()
-        form = change_password()
-        if form.validate_on_submit():
-            password = form.password.data
-            std.password = password
-            db.session.commit()
-            return redirect(url_for('student_dashboard'))
-        else:
-            return redirect(url_for('index'))
+    if form.validate_on_submit():
+        password = form.password.data
+        std.password = password
+        db.session.commit()
+        return redirect(url_for('student_dashboard'))
     return render_template("change_password.html", form=form)
 
 @login_required
 @app.route('/change/address/teacher/<id>',methods=['GET','POST'])
 def teacher_change_address(id):
+    teacher = Teacher.query.filter(id=int(id)).first()
     form = change_address()
-    if current_user.is_authenticated:
-        teacher = Teacher.query.filter(id=int(id)).first()
-        form = change_address()
-        if form.validate_on_submit():
-            address = form.email.data
-            teacher.address = address
-            db.session.commit()
-            return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('index'))
+    if form.validate_on_submit():
+        address = form.email.data
+        teacher.address = address
+        db.session.commit()
+        return redirect(url_for('teacher_dashboard'))
     return render_template("change_address.html", form=form)
 
 @login_required
 @app.route('/change/address/student/<id>',methods=['GET','POST'])
 def student_change_address(id):
-    if current_user.is_authenticated:
-        std = Student.query.filter(id=int(id)).first()
-        form = change_address()
-        if form.validate_on_submit():
-            address = form.address.data
-            std.address = address
-            db.session.commit()
-            return redirect(url_for('student_dashboard'))
-    else:
-        return redirect(url_for('index'))
+    std = Student.query.filter(id=int(id)).first()
+    form = change_address()
+    if form.validate_on_submit():
+        address = form.address.data
+        std.address = address
+        db.session.commit()
+        return redirect(url_for('student_dashboard'))
     return render_template("change_address.html", form=form)
 
 @login_required
 @app.route('/student/homework/check')
 def student_homework_check():
-    if current_user.is_authenticated:
-        std = current_user.cls_id
-        hw = Homework.query.filter(Cls=std).all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('index'))
-    return render_template("student_homework.html",post=hwk)
+    std = current_user.cls_id
+    hw = Homework.query.filter(cls_id=std).all()
+    hwk = hw[::-1]
+    return render_template("student_homework.html",posts=hwk)
 
 @login_required
 @app.route('/teacher/homework/check')
 def teacher_homework_check():
-    if current_user.is_authenticated:
-        std = current_user.teacher_name
-        hw = Homework.query.filter(by=std).all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('index'))
-    return render_template("teacher_homework.html",post=hwk)
+    std = current_user.id
+    hw = Homework.query.filter(by_id=std).all()
+    hwk = hw[::-1]
+    return render_template("teacher_homework.html",posts=hwk)
 
 @login_required
 @app.route('/student/comment/check')
 def student_comment_check():
-    if current_user.is_authenticated:
-        std = current_user.id
-        hw = Comment.query.filter(std_id=std).all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('index'))
-    return render_template("student_comment.html",post=hwk)
+    std = current_user.id
+    hw = Comment.query.filter(std_id=std).all()
+    hwk = hw[::-1]
+    return render_template("student_comment.html",posts=hwk)
 
 @login_required
 @app.route('/teacher/comment/check')
 def teacher_comment_check():
-    if current_user.is_authenticated:
-        std = current_user.teacher_name
-        hw = Comment.query.filter(by=std).all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('index'))
-    return render_template("teacher_comment.html",post=hwk)
+    std = current_user.id
+    hw = Comment.query.filter(by_id=std).all()
+    hwk = hw[::-1]
+    return render_template("teacher_comment.html",posts=hwk)
 
 @login_required
 @app.route('/student/fail/check')
 def student_fail_check():
-    if current_user.is_authenticated:
-        std = current_user.id
-        hw = Fail.query.filter(std_id=std).all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('index'))
-    return render_template("student_fail.html",post=hwk)
+    std = current_user.id
+    hw = Fail.query.filter(std_id=std).all()
+    hwk = hw[::-1]
+    return render_template("student_fail.html",posts=hwk)
 
 @login_required
 @app.route('/teacher/fail/check')
 def teacher_fail_check():
-    if current_user.is_authenticated:
-        hw = Homework.query.all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('index'))
-    return render_template("teacher_homework.html",post=hwk)
+    hw = Fail.query.all()
+    hwk = hw[::-1]
+    return render_template("teacher_fail.html",posts=hwk)
 
 @login_required
-@app.route('student/dashboard')
+@app.route('/student/dashboard')
 def student_dashboard():
-    if current_user.is_authenticated:
-        teen = float(web3.toWei(contract.functions.balanceOf(current_user.address).call(), 'ether'))
-        eth = float(web3.toWei(web3.eth.getBalance(current_user.address), 'ether'))
-        class_in_level = Class.query.filter(level=current_user.level).all()
-    else:
-        return redirect(url_for('index'))
-    return render_template("student_dashboard.html", teen_balanced=teen, eth_balenced=eth, Class=class_in_level)
+    teen = float(web3.toWei(contract.functions.balanceOf(current_user.address).call(), 'ether'))
+    eth = float(web3.toWei(web3.eth.getBalance(current_user.address), 'ether'))
+    return render_template("student_dashboard.html", teen_balanced=teen, eth_balenced=eth,)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+'''
+with app.app_context():
+    db.create_all()
+
+'''
 if __name__ == '__main__':
     app.run(debug=True)
+
