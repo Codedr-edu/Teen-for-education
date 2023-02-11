@@ -168,19 +168,19 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                     <p class="menu-label" class="my">
                         Chính
                     </p>
-                    <ul class="menu-list">
-                        <li><a href="#" class="is-active">Trang chủ</a></li>
-                        <li><a class="my text-light">Danh sách các lớp</a></li>
-                        <li><a href="" class="my text-light">Các lỗi của học sinh</a></li>
+                   <ul class="menu-list">
+                        <li><a href="{{url_for('teacher_dashboard'}}" class="is-active">Trang chủ</a></li>
+                        <li><a href="{{url_for('show_cls')}}" class="my text-light">Danh sách các lớp</a></li>
+                        <li><a href="{{url_for('teacher_fail_check')}}" class="my text-light">Các lỗi của học sinh</a></li>
                     </ul>
                     <p class="menu-label">
-                        Chuyển token/coin
+                        Mở rộng
                     </p>
                     <ul class="menu-list">
                         <li>
                             <a href="" class="my text-light">Chuyển</a>
                             <ul>
-                                <li><a href="{{url_for('teacher_homework_check')}}" class="my text-light">BTVN đã giao</a></li>
+                                <li><a href="#" class="my text-light">BTVN đã giao</a></li>
                                 <li><a href="{{url_for('teacher_comment_check')}}" class="my text-light">Nhận xét học sinh</a></li>
                                 <li><a href="{{url_for('student_fail_add')}}" class="my text-light">Thêm lỗi cho học sinh</a></li>
                             </ul>
@@ -205,7 +205,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                                 Hello, {{current_user.teacher_name}}.
                             </h1>
                             <h2 class="subtitle">
-                                Đây là các nhận xét và phần thưởng mà bạn đã dành cho học sinh
+                                Đây là các bài tập bạn đã giao cho học sinh
                             </h2>
                         </div>
                     </div>
