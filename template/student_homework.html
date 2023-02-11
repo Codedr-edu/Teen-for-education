@@ -172,7 +172,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                         <li><a href="#" class="is-active">Trang chủ</a></li>
                     </ul>
                     <p class="menu-label">
-                        Chuyển token/coin
+                        Mở rộng
                     </p>
                     <ul class="menu-list">
                         <li>
@@ -203,7 +203,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                                 Hello, {{current_user.student_name}}.
                             </h1>
                             <h2 class="subtitle">
-                                Đây là bài tập mà các giáo viên đã dành cho bạn
+                                Đây là những lỗi mà bạn đã mắc phải
                             </h2>
                         </div>
                     </div>
@@ -211,7 +211,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                 <div class="container">
                     {% if posts|length != 0 %}
                         {% for post in posts %}
-                            <div class="card text-center">
+                            <div class="card text-center text-light">
                               <div class="card-header">
                                 {{ post.by }}
                               </div>
@@ -220,7 +220,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                                 <p class="card-text">{{post.name}}</p>
                               </div>
                               <div class="card-footer text-light">
-                                {{post.cls_id}}
+                                {{post.std_name}}
                               </div>
                             </div>
                         {% endfor %}
