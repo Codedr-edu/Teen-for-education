@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+      html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);
+/* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  /*background-repeat: no-repeat;*/
+  background-size: cover;
+  position: relative;
+ /* background-size: cover;
+  position: relative;*/
+}
+nav.navbar {
+  border-top: 2px solid #0093E9;
+  margin-bottom: 1rem;
+}
+.navbar-item.brand-text {
+  font-weight: 300;
+}
+.navbar-item, .navbar-link {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.navbar .text-white{
+  color:white;
+}
+
+.navbar-item:hover{
+color: #0093E9;
+}
+
+.columns {
+  width: 100%;
+  height: 100%;
+  margin-left: 0;
+}
+.menu-label {
+  color: #fff;
+  letter-spacing: 1.3;
+  font-weight: 700;
+}
+.menu-list a {
+  color: #0F1D38;
+  font-size: 14px;
+  font-weight: 700;
+}
+.menu-list a:hover {
+    background: rgba( 255, 255, 255, 0.45 );
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+backdrop-filter: blur( 4px );
+-webkit-backdrop-filter: blur( 4px );
+border-radius:5px;
+    color: #fff;
+}
+.menu-list a.is-active {
+  background-color: transparent;
+  color: #fff;
+  font-weight: 700;
+}
+
+.my :hover{
+     background: rgba(255, 255, 255, 0.31);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(9.9px);
+-webkit-backdrop-filter: blur(9.9px);
+border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.31);
+border-radius: 5px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(9.9px);
+-webkit-backdrop-filter: blur(9.9px);
+border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.card-header-title {
+  color: #8F99A3;
+  font-weight: 400;
+}
+.info-tiles {
+  margin: 1rem 0;
+}
+.info-tiles .subtitle {
+  font-weight: 300;
+  color: #8F99A3;
+}
+.hero.welcome.is-info {
+    background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);
+border-radius: 5px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(9.9px);
+-webkit-backdrop-filter: blur(9.9px);
+border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.hero.welcome .title, .hero.welcome .subtitle {
+  color: hsl(192, 17%, 99%);
+}
+.card .content {
+  font-size: 14px;
+}
+.card-footer-item {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8F99A3;
+}
+.my :hover {
+    color:#0093E9;
+}
+.card-table .table {
+  margin-bottom: 0;
+}
+.events-card .card-table {
+  max-height: 250px;
+  overflow-y: scroll;
+}
+.button{
+    background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);
+            border-radius: 5px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(12.7px);
+            -webkit-backdrop-filter: blur(12.7px);
+  margin-bottom: 10px;
+  width:96%;
+  margin-left: 20px;
+  color:white;
+}
+
+.button:hover{
+    transform: scale(1.02);
+    color:white;
+}
+    </style>
+</head>
+<body>
+  <!-- START NAV -->
+    <div style="background: rgba(255, 255, 255, 0.31);
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(9.9px);
+-webkit-backdrop-filter: blur(9.9px);
+border: 1px solid rgba(255, 255, 255, 0.3);">
+        <div class="container">
+            <h1 class="title is-1" style="color:#fff;">T.F.E</h1>
+        </div>
+    </div>
+    <div class="container" style="margin-top:20px;">
+        <div class="columns">
+            <div class="column is-3 ">
+                <aside class="menu is-hidden-mobile">
+                    <p class="menu-label" class="my">
+                        Chính
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="#" class="is-active">Trang chủ</a></li>
+                        <li><a class="my text-light">Danh sách các lớp</a></li>
+                        <li><a href="" class="my text-light">Các lỗi của học sinh</a></li>
+                    </ul>
+                    <p class="menu-label">
+                        Chuyển token/coin
+                    </p>
+                    <ul class="menu-list">
+                        <li>
+                            <a href="" class="my text-light">Chuyển</a>
+                            <ul>
+                                <li><a href="{{url_for('teacher_homework_check')}}" class="my text-light">BTVN đã giao</a></li>
+                                <li><a href="{{url_for('teacher_comment_check')}}" class="my text-light">Nhận xét học sinh</a></li>
+                                <li><a href="{{url_for('student_fail_add')}}" class="my text-light">Thêm lỗi cho học sinh</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="menu-label">
+                        Tài khoản
+                    </p>
+                    <ul class="menu-list">
+                        <li><a class="my text-light">Đổi mật khẩu</a></li>
+                        <li><a class="my text-light">Đổi email</a></li>
+                        <li><a class="my text-light">Đổi địa chỉ ví</a></li>
+                        <li><a href="{{url_for('logout')}}" class="my text-light">Đăng xuất</a></li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="column is-9">
+                        <section class="hero is-info welcome is-small" style="border-radius:5px;width:98%;margin-left:10px;">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                Hello, {{current_user.teacher_name}}.
+                            </h1>
+                            <h2 class="subtitle">
+                                Đây là các nhận xét và phần thưởng mà bạn đã dành cho học sinh
+                            </h2>
+                        </div>
+                    </div>
+                </section>
+                <div class="container">
+                    {% if posts|length != 0 %}
+                        {% for post in posts %}
+                            <div class="card text-center text-light">
+                              <div class="card-header">
+                                {{ post.by }}
+                              </div>
+                              <div class="card-body">
+                                <h5 class="card-title">{{post.present}}</h5>
+                                <p class="card-text">{{post.name}}</p>
+                              </div>
+                              <div class="card-footer text-light">
+                                {{post.cls_id}}
+                              </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="card text-center text-light">
+                          <div class="card-body">
+                            <h5 class="card-title">404</h5>
+                            <p class="card-text">Not found</p>
+                          </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script async type="text/javascript" src="../js/bulma.js"></script>
+    <script>
+        function Copylink() {
+  // Get the text field
+  //var copyText = "https://teenownsystem.pythonanywhere.com/teen/{{current_user.id}}" ;
+
+  // Select the text field
+  //copyText.select();
+  //copyText.setSelectionRange(0, 99999); // For mobile devices
+
+   // Copy the text inside the text field
+  //navigator.clipboard.writeText(copyText.value);
+
+  // Alert the copied text
+  //alert("Copied the text: " + copyText.value);
+}
+    </script>
+</body>
+</html>

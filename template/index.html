@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</head>
+<body>
+      <nav class="navbar navbar-expand-lg text-light" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+">
+  <div class="container">
+    <a class="navbar-brand text-light" href="#">Teen For Education</a>
+    <button class="navbar-toggler text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon text-light"></span>
+    </button>
+    <div class="collapse navbar-collapse text-light" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item text-light">
+          <a class="nav-link active text-light text-wrap" aria-current="page" href="#">Trang chủ</a>
+        </li>
+        <li class="nav-item text-light">
+          <a class="nav-link text-light" href="https://teenownsystem.pythonanywhere.com/">T.O.S</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Học sinh
+          </a>
+          <ul class="dropdown-menu shadow-lg" style="background: white">
+            <li><a class="dropdown-item" style="color:#76b852;" href="{{url_for('student_login')}}">Đăng nhập</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Giáo viên
+          </a>
+          <ul class="dropdown-menu shadow-lg" style="background: white">
+            <li><a class="dropdown-item" style="color:#76b852;" href="#">Đăng nhập</a></li>
+            <li><a class="dropdown-item" style="color:#76b852;" href="#">Đăng ký</a></li>
+
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <div class="container">
+    <div style="margin: 0 auto; /* Added */
+    float: none; /* Added */
+    margin-bottom: 10px; /* Added */
+margin-top: 30px;">
+      <div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Chào mừng các giáo viên đã đến với T.F.E</h5>
+        <p class="card-text">T.F.E là phần mềm quản lý, khen thưởng, trách phạt học sinh sử dụng công nghệ tiền điện tử, web3, blockchain vào nằm đánh giá và trao thưởng cho học sinh giúp học sinh tích cực hơn trong vấn đề học tập</p>
+        <a href="{{url_for('teacher_register')}}" style="background-color:#76b852;" class="btn text-light">Đăng ký tài khoản giáo viên</a>
+        <a href="{{url_for('teacher_login')}}" style="background-color:#76b852;" class="btn text-light">Đăng ký nhập tài khoản giáo viên</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Chào mừng các học sinh đã đến với T.F.E</h5>
+        <p class="card-text">T.F.E là phần mềm quản lý, khen thưởng, trách phạt học sinh sử dụng công nghệ tiền điện tử, web3, blockchain vào nằm đánh giá và trao thưởng cho học sinh giúp học sinh tích cực hơn trong vấn đề học tập</p>
+        <a href="{{url_for('student_login')}}" class="btn text-light" style="background-color:#76b852;">Đăng nhập dưới tư cách học sinh</a>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+
+</body>
+</html>
