@@ -187,10 +187,17 @@ def teacher_dashboard():
     return render_template("teacher_dashboard.html",teen_balanced=teen,eth_balenced=eth,Class=class_in_level)
 
 @login_required
-@app.route('/class/<Class>')
-def Class_check(Class):
-    Std = Student.query.filter(Class=Class).all()
+@app.route('/class/<Cls_id>')
+def Class_check(Cls_id):
+    cls = Class.query.filter(id=Cls_id)
+    Std = Student.query.filter(Cls_id=Cls_id).all()
     return render_template("class.html",users=Std)
+
+@login_required
+@app.route('/teacher/show/class/')
+def show_cls():
+    cls = Class.query.all()
+    return render_template('class_check.html',posts=cls)
 
 @login_required
 @app.route('/student/comment/<id>',methods=["GET","POST"])
