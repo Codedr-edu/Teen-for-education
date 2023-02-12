@@ -42,7 +42,6 @@ class Teacher(UserMixin,db.Model):
     teacher_name = db.Column(db.String(15),nullable=False)
     email = db.Column(db.String(100),unique=True,nullable=False)
     subject = db.Column(db.String(45),nullable=False)
-    level = db.Column(db.String(100),nullable=False)
     address = db.Column(db.String, unique=True,nullable=False)
     password = db.Column(db.String(80),nullable=False)
 
@@ -65,7 +64,6 @@ class Student(UserMixin,db.Model):
 
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    level = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(10),nullable=False)
     #homework = db.relationship('Homework', backref='article', lazy=True)
@@ -199,6 +197,15 @@ def show_cls():
     cls = Class.query.all()
     return render_template('class_check.html',posts=cls)
 
+@login_required
+@app.route('/teacher/add/class',methods=['GET','POST'])
+def create_class():
+    grade = request.form.get('grade')
+    name = request.form.get('grade')
+    new_cls = Class(grade=grade,name=name)
+    db.session.add(new_cls)
+    db.session.commit()
+    return render_template('add_class.html')
 @login_required
 @app.route('/student/comment/<id>',methods=["GET","POST"])
 def student_comment(id):
@@ -475,11 +482,11 @@ def index():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-'''
+
 with app.app_context():
     db.create_all()
 
 '''
 if __name__ == '__main__':
     app.run(debug=True)
-
+'''
