@@ -103,7 +103,7 @@ class Fail(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Teacher.session.get(int(user_id))
+    return Teacher.query.get(int(user_id))
 
 class st_comment(FlaskForm):
     atendent = StringField('Có mặt hay vắng mặt')
@@ -152,7 +152,7 @@ def teacher_register():
             acct = Account.from_key(private_key)  # tạo ví
             print("Address:", acct.address)
             hashpass = generate_password_hash(password, method='sha256')
-            new_user = Teacher(email=email, address=acct.address, password=hashpass,teacher_name=name,account_type=1,cls_id=0)  # tạo user mới
+            new_user = Teacher(email=email, address=acct.address, password=hashpass,name=name,account_type=1,cls_id=0)  # tạo user mới
             db.session.add(new_user)  # tạo user 2
             db.session.commit()  # commit user
             login_user(new_user)  # đăng nhập tài khoản
@@ -171,10 +171,9 @@ def teacher_dashboard():
     if current_user.account_type == 1:
         teen = float(web3.toWei(contract.functions.balanceOf(current_user.address).call(),'ether'))
         eth = float(web3.toWei(web3.eth.getBalance(current_user.address), 'ether'))
-        class_in_level = Class.query.filter(level=current_user.level).all()
     else:
         return redirect(url_for('student_dashboard'))
-    return render_template("teacher_dashboard.html",teen_balanced=teen,eth_balenced=eth,Class=class_in_level)
+    return render_template("teacher_dashboard.html",teen_balanced=teen,eth_balenced=eth)
 
 @login_required
 @app.route('/class/<Cls_id>')
@@ -222,7 +221,7 @@ def student_comment(id):
             test = os.environ[current_user.id + std.id] = private_key  # cho vào biến môi trường để có toàn bộ dữ liệu của private key
             test2 = os.getenv(current_user.id + std.id)  # lấy dữ liệu từ biến môi trường
             if "có" in atendent:
-                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present), by=current_user.teacher_name, std_id=std.id, by_id=current_user.id)
+                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present), by=current_user.name, std_id=std.id, by_id=current_user.id)
                 db.session.add(new_cmt)
                 std.present += 1
                 db.session.commit()
@@ -240,7 +239,7 @@ def student_comment(id):
                     else:
                         return redirect(url_for('teacher_dashboard'))
             else:
-                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present),by=current_user.teacher_name, std_id=std.id,by_id=current_user.id)
+                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present),by=current_user.name, std_id=std.id,by_id=current_user.id)
                 db.session.add(new_cmt)
                 std.absent += 1
                 db.session.commit()
@@ -270,7 +269,7 @@ def class_homework(id):
         name = form.name.data
         mark = form.mark.data
         present = form.present.data
-        new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), class_id=cls.id,by=current_user.teacher_name,by_id=current_user.id)
+        new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), class_id=cls.id,by=current_user.name,by_id=current_user.id)
         db.session.add(new_hwk)
         db.session.commit()
     return render_template('hw.html',form=form)
@@ -354,13 +353,12 @@ def add_student():
     if current_user.account_type == 1:
         if request.method == 'POST':
             name = request.form.get('name')
-            Class = request.form.get('class')
             email = request.form.get('email')
             address = request.form.get('address')
             password = request.form.get('password')
             cls_id = request.form.get('ID lớp')
 
-            new_student = Teacher(student_name=name, email=email, Class=Class, address=address, password=password, cls_id=cls_id,account_type=2)
+            new_student = Teacher(student_name=name, email=email, address=address, password=password, cls_id=cls_id,account_type=2)
             db.session.add(new_student)
             db.session.commit()
 
@@ -552,6 +550,7 @@ def index():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 '''
 with app.app_context():
     db.create_all()
@@ -559,5 +558,6 @@ with app.app_context():
 '''
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
