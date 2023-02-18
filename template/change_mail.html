@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+</head>
+<body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <!-- JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
@@ -24,7 +30,7 @@ backdrop-filter: blur(9.9px);
             <br>
             <div class="container">
               <br>
-          <h1 class="text-light title is-1"  style="text-align: center;">Đổi email</h1>
+          <h1 class="text-light title is-1"  style="text-align: center;">Đổi mail</h1>
           <br>
           <div class="card shadow" style="border-radius: 5px; margin: 0 auto; /* Added */
     float: none; /* Added */
@@ -35,10 +41,11 @@ backdrop-filter: blur(9.9px);
 -webkit-backdrop-filter: blur(9.9px);
 border: 1px solid rgba(255, 255, 255, 0.3);">
             <div class="card-body">
-              <form method="POST" action="" enctype="multipart/form-data">
-                {{form.hidden_tag()}}
-                {{wtf.form_field(form.change_mail)}}
-                <br>
+              <form action="/change/mail/teacher/" method="POST" enctype="multipart/form-data">
+                <div class="mb-3 form-group">
+                  <label for="email" class="form-label text-light">Email</label>
+                  <input type="email" class="form-control shadow-lg" id="email" name="email" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
                 <button type="submit" class="btn text-light shadow"  style="width:100%;
             background: rgba(0, 147, 233, 0.14);
             border-radius: 16px;
@@ -50,4 +57,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
         </div>
               </div>
   </body>
+</html>
+
+</body>
 </html>
