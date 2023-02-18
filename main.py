@@ -40,7 +40,7 @@ db.init_app(app)
 class Teacher(UserMixin,db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(15),nullable=False)
-    email = db.Column(db.String(100),unique=True,nullable=False)
+    email = db.Column(db.String(100),nullable=False)
     address = db.Column(db.String, unique=True,nullable=False)
     account_type = db.Column(db.Integer,nullable=False)
     cls_id = db.Column(db.Integer,nullable=False)
@@ -66,7 +66,7 @@ class Student(UserMixin,db.Model):
 
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    grade = db.Column(db.Integer, nullable=False)
+    grade = db.Column(db.Integer,nullable=False)
     name = db.Column(db.String(10),nullable=False)
     #homework = db.relationship('Homework', backref='article', lazy=True)
     """
@@ -106,7 +106,6 @@ def load_user(user_id):
     return Teacher.query.get(int(user_id))
 
 class st_comment(FlaskForm):
-    atendent = StringField('Có mặt hay vắng mặt')
     comment = TextAreaField('Nhận xét')
     present = FloatField('Thưởng Teen')
     priv = PasswordField("Private key")
@@ -179,8 +178,7 @@ def teacher_dashboard():
 @app.route('/class/<Cls_id>')
 def Class_check(Cls_id):
     if current_user.account_type == 1:
-        cls = Class.query.filter(id=Cls_id)
-        Std = Teacher.query.filter(cls_id=Cls_id,account_type=2).all()
+        Std = Teacher.query.filter_by(cls_id=Cls_id,account_type=2).all()
     else:
         return redirect(url_for('student_dashboard'))
     return render_template("class.html",users=Std)
@@ -198,101 +196,64 @@ def show_cls():
 @app.route('/teacher/add/class',methods=['GET','POST'])
 def create_class():
     if current_user.account_type == 1:
-        grade = request.form.get('grade')
-        name = request.form.get('grade')
-        new_cls = Class(grade=grade,name=name)
-        db.session.add(new_cls)
-        db.session.commit()
+        if request.method == 'POST':
+            grade = request.form.get('grade')
+            name = request.form.get('name')
+            new_cls = Class(grade=grade,name=name)
+            db.session.add(new_cls)
+            db.session.commit()
     else:
         return redirect(url_for('student_dashboard'))
     return render_template('add_class.html')
 @login_required
-@app.route('/student/comment/<id>',methods=["GET","POST"])
-def student_comment(id):
-    if current_user.account_type == 1:
-        std =Teacher.query.filter(id=int(id)).first()
-        form = st_comment()
-        fail = Fail.query.filter(std_id=int(id)).first()
-        if form.validate_on_submit():
-            atendent = form.atendent.data
-            comment = form.comment.data
-            present = form.present.data
-            private_key = form.priv.data
-            test = os.environ[current_user.id + std.id] = private_key  # cho vào biến môi trường để có toàn bộ dữ liệu của private key
-            test2 = os.getenv(current_user.id + std.id)  # lấy dữ liệu từ biến môi trường
-            if "có" in atendent:
-                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present), by=current_user.name, std_id=std.id, by_id=current_user.id)
-                db.session.add(new_cmt)
-                std.present += 1
-                db.session.commit()
-                if fail:
-                    pass
-                else:
-                    if present > 0:
-                        tran = contract.functions.transfer(std.address, web3.toWei(present, 'ether')).buildTransaction(
-                            {'chainId': 11155111, 'gasPrice': web3.toWei('15', 'gwei'), 'gas': 210000,
-                             'nonce': web3.eth.get_transaction_count(current_user.address), 'value': 0})  # tạo giao dịch
-                        signed_txn = web3.eth.account.sign_transaction(tran, test2)  # xác nhận giao dịch
-                        web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # giao dịch
-                        time.sleep(23)
-                        return redirect(url_for('dashboard'))
-                    else:
-                        return redirect(url_for('teacher_dashboard'))
-            else:
-                new_cmt = Comment(Std_name=std.student_name, comment=comment, present=str(present),by=current_user.name, std_id=std.id,by_id=current_user.id)
-                db.session.add(new_cmt)
-                std.absent += 1
-                db.session.commit()
-                if fail:
-                    pass
-                else:
-                    if present > 0:
-                        tran = contract.functions.transfer(std.address, web3.toWei(present, 'ether')).buildTransaction(
-                            {'chainId': 11155111, 'gasPrice': web3.toWei('15', 'gwei'), 'gas': 210000,
-                             'nonce': web3.eth.get_transaction_count(current_user.address), 'value': 0})  # tạo giao dịch
-                        signed_txn = web3.eth.account.sign_transaction(tran, test2)  # xác nhận giao dịch
-                        web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # giao dịch
-                        time.sleep(23)
-                        return redirect(url_for('dashboard'))
-                    else:
-                        return redirect(url_for('teacher_dashboard'))
-        else:
-            return redirect(url_for('student_dashboard'))
-    return render_template('cmt.html', form=form)
+@app.route('/student/comment/',methods=["GET","POST"])
+def student_comment():
+    if request.method == 'POST':
+        comment = request.form.get('comment')
+        id = request.form.get('id')
+        present = request.form.get('present')
+        private_key = request.form.get("private")
+        std = Teacher.query.filter_by(id=int(id)).first()
+        test = os.environ[current_user.id + std.id] = private_key  # cho vào biến môi trường để có toàn bộ dữ liệu của private key
+        test2 = os.getenv(current_user.id + std.id)  # lấy dữ liệu từ biến môi trường
+        new_cmt = Comment(Std_name=std.name, comment=comment, present=str(present), by=current_user.name, std_id=std.id, by_id=current_user.id)
+        db.session.add(new_cmt)
+        db.session.commit()
+        tran = contract.functions.transfer(std.address, web3.toWei(present, 'ether')).buildTransaction(
+                {'chainId': 11155111, 'gasPrice': web3.toWei('15', 'gwei'), 'gas': 210000,
+                'nonce': web3.eth.get_transaction_count(current_user.address), 'value': 0})  # tạo giao dịch
+        signed_txn = web3.eth.account.sign_transaction(tran, test2)  # xác nhận giao dịch
+        web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # giao dịch
+        time.sleep(23)
+        return redirect(url_for('dashboard'))
+    return render_template('cmt.html')
 
 @login_required
-@app.route('/class/homework/<id>',methods = ['GET','POST'])
-def class_homework(id):
-    cls = Class.query.filter(id=int(id)).first()
-    form = homework()
-    if form.validate_on_submit():
-        name = form.name.data
-        mark = form.mark.data
-        present = form.present.data
+@app.route('/class/homework/',methods = ['GET','POST'])
+def class_homework():
+    if request.method == 'POST':
+        css = request.form.get('class')
+        name = request.form.get('name')
+        mark = request.form.get('mark')
+        present = request.form.get('present')
+        cls = Class.query.filter_by(id=int(css)).first()
         new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), class_id=cls.id,by=current_user.name,by_id=current_user.id)
         db.session.add(new_hwk)
         db.session.commit()
-    return render_template('hw.html',form=form)
+    return render_template('hw.html')
 
 @login_required
-@app.route('/student/fail/<id>',methods=['GET','POST'])
-def student_fail_add(id):
-    if current_user.account_type == 1:
-        std = Teacher.query.filter(id=int(id)).first()
-        form = fail_add()
-        if form.validate_on_submit():
-            name = form.name.data
-            value = form.value.data
-            if value > 0:
-                new_fail = Fail(Std_name=std.student_name, Std_id=std.id, name=name, value=str(value))
-                db.session.add(new_fail)
-                db.session.commit()
-                return redirect(url_for('fail_id',std_id = std.id))
-            else:
-                pass
-    else:
-        return redirect(url_for('student_dashboard'))
-    return render_template("fail.html",form=form)
+@app.route('/student/fail/',methods=['GET','POST'])
+def student_fail_add():
+    if request.method == 'POST':
+        id = request.form.get(id)
+        name = request.form.get('name')
+        value = request.form.get('value')
+        std = Teacher.query.filter_by(id=int(id)).first()
+        fail = Fail(Std_name=std.name,Std_id=id,name=name,value=value)
+        db.session.add(fail)
+        db.session.commit()
+    return render_template("fail.html")
 
 @login_required
 @app.route('/student/fail/id/<std_id>')
@@ -305,13 +266,16 @@ def fail_id(std_id):
     return render_template("fail_id.html",id=final_fail)
 
 @login_required
-@app.route('/student/fail/delete/<id>')
-def fail_delete(id):
-    if current_user.account_type == 1:
-        Fail.query.filter(id=id).delete()
+@app.route('/student/fail/delete',methods=['GET','POST'])
+def fail_delete():
+    if request.method == 'POST':
+        id = request.form.get("id")
+        fail = Fail.query.filter_by(id=int(id)).first()
+        fail2 = Teacher.query.filter_by(std_id=fail.std_id).first()
+        fail.delete()
         db.session.commit()
-    else:
-        return redirect(url_for('student_dashboard'))
+        return redirect('class_check',id=fail2.cls_id)
+    return render_template('delete_fail.html')
 
 @app.route('/teacher/login', methods=['GET','POST'])
 def teacher_login():
@@ -356,115 +320,57 @@ def add_student():
             email = request.form.get('email')
             address = request.form.get('address')
             password = request.form.get('password')
-            cls_id = request.form.get('ID lớp')
+            cls_id = request.form.get('Cls_id')
 
-            new_student = Teacher(student_name=name, email=email, address=address, password=password, cls_id=cls_id,account_type=2)
+            new_student = Teacher(name=name, email=email, address=address, password=password, cls_id=cls_id,account_type=2)
             db.session.add(new_student)
             db.session.commit()
-
-            return redirect(url_for('student_dashboard'))
     else:
         return redirect(url_for('student_dashboard'))
     return render_template('add_student.html')
 
 @login_required
-@app.route('/delete/student/<id>')
-def delete_student(id):
-    if current_user.account_type == 1:
-        Teacher.query.filter(id=int(id)).first().delete()
+@app.route('/delete/student',methods=['GET','POST'])
+def delete_student():
+    if request.method == 'POST':
+        id = request.form.get('id')
+        std = Teacher.query.filter_by(id=int(id)).first()
+        std2 = std.cls_id
+        std.delete()
         db.session.commit()
-    else:
-        return redirect(url_for('student_dashboard'))
+        return redirect(url_for('class_check',id=std2))
+    return render_template('delete.html')
+
 
 @login_required
-@app.route('/change/mail/teacher/<id>',methods=['GET','POST'])
-def teacher_change_mail(id):
-    if current_user.account_type == 1:
-        teacher = Teacher.query.filter(id=int(id)).first()
-        form = change_mail()
-        if form.validate_on_submit():
-            email = form.email.data
-            teacher.email = email
-            db.session.commit()
-            return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('student_dashboard'))
-    return render_template("change_mail.html", form=form)
+@app.route('/change/mail/teacher/',methods=['GET','POST'])
+def change_mail():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        current_user.email = email
+        db.session.commit()
+    return render_template("change_mail.html")
+
 
 @login_required
-@app.route('/change/mail/student/<id>',methods=['GET','POST'])
-def student_change_mail(id):
-    if current_user.account_type == 2:
-        std = Teacher.query.filter(id=int(id)).first()
-        form = change_mail()
-        if form.validate_on_submit():
-            email = form.email.data
-            std.email = email
-            db.session.commit()
-            return redirect(url_for('student_dashboard'))
-    else:
-        return redirect(url_for('teacher_dashboard'))
-    return render_template("change_mail.html", form=form)
+@app.route('/change/password/teacher/',methods=['GET','POST'])
+def change_pass():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        hashpass = generate_password_hash(password, method='sha256')
+        current_user.password = hashpass
+        db.session.commit()
+    return render_template("change_password.html")
 
 @login_required
-@app.route('/change/password/teacher/<id>',methods=['GET','POST'])
-def teacher_change_pass(id):
-    if current_user.account_type == 1:
-        teacher = Teacher.query.filter(id=int(id)).first()
-        form = change_password()
-        if form.validate_on_submit():
-            password = form.email.data
-            teacher.email = password
-            db.session.commit()
-            return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('student_dashboard'))
-    return render_template("change_password.html", form=form)
+@app.route('/change/address/teacher/',methods=['GET','POST'])
+def teacher_change_address():
+    if request.method == 'POST':
+        address = request.form.get('address')
+        current_user.address = address
+        db.session.commit()
+    return render_template("change_address.html")
 
-@login_required
-@app.route('/change/password/student/<id>',methods=['GET','POST'])
-def student_change_pass(id):
-    if current_user.account_type == 2:
-        std = Teacher.query.filter(id=int(id)).first()
-        form = change_password()
-        if form.validate_on_submit():
-            password = form.password.data
-            std.password = password
-            db.session.commit()
-            return redirect(url_for('student_dashboard'))
-    else:
-        return redirect(url_for('teacher_dashboard'))
-    return render_template("change_password.html", form=form)
-
-@login_required
-@app.route('/change/address/teacher/<id>',methods=['GET','POST'])
-def teacher_change_address(id):
-    if current_user.account_type == 1:
-        teacher = Teacher.query.filter(id=int(id)).first()
-        form = change_address()
-        if form.validate_on_submit():
-            address = form.email.data
-            teacher.address = address
-            db.session.commit()
-            return redirect(url_for('teacher_dashboard'))
-    else:
-        return redirect(url_for('student_dashboard'))
-    return render_template("change_address.html", form=form)
-
-@login_required
-@app.route('/change/address/student/<id>',methods=['GET','POST'])
-def student_change_address(id):
-    if current_user.account_type == 2:
-        std = Teacher.query.filter(id=int(id)).first()
-        form = change_address()
-        if form.validate_on_submit():
-            address = form.address.data
-            std.address = address
-            db.session.commit()
-            return redirect(url_for('student_dashboard'))
-    else:
-        return redirect(url_for('teacher_dashboard'))
-    return render_template("change_address.html", form=form)
 
 @login_required
 @app.route('/student/homework/check')
@@ -558,6 +464,7 @@ with app.app_context():
 '''
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
