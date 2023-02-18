@@ -24,7 +24,7 @@ backdrop-filter: blur(9.9px);
             <br>
             <div class="container">
               <br>
-          <h1 class="text-light title is-1"  style="text-align: center;">Thêm nhận xét</h1>
+          <h1 class="text-light title is-1"  style="text-align: center;">Đăng ký</h1>
           <br>
           <div class="card shadow" style="border-radius: 5px; margin: 0 auto; /* Added */
     float: none; /* Added */
@@ -35,16 +35,29 @@ backdrop-filter: blur(9.9px);
 -webkit-backdrop-filter: blur(9.9px);
 border: 1px solid rgba(255, 255, 255, 0.3);">
             <div class="card-body">
-              <form method="POST" action="" enctype="multipart/form-data">
-                {{form.hidden_tag()}}
-                {{wtf.form_field(form.st_comment)}}
-                <br>
+              <form action="/student/comment/" method="POST" enctype="multipart/form-data">
+                <div class="mb-3 form-group">
+                  <label for="comment" class="form-label text-light">Nội dung</label>
+                  <input type="text" class="form-control shadow-lg" id="comment" name="comment" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="name" class="form-label text-light">ID học sinh</label>
+                  <input type="text" class="form-control shadow-lg" id="name" name="name" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
+                  <div class="mb-3 form-group">
+                  <label for="subject" class="form-label text-light">Thưởng Teen</label>
+                  <input type="text" class="form-control shadow-lg" id="subject" name="subject" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="password" class="form-label text-light">Private key</label>
+                  <input type="password" class="form-control shadow-lg" id="password" name="password" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
                 <button type="submit" class="btn text-light shadow"  style="width:100%;
             background: rgba(0, 147, 233, 0.14);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(12.7px);
-            -webkit-backdrop-filter: blur(12.7px);;margin-top: 10px;margin-bottom: 10px;color:#fff;border-radius:5px;">Đăng</button>
+            -webkit-backdrop-filter: blur(12.7px);;margin-top: 10px;margin-bottom: 10px;color:#fff;border-radius:5px;">Nhận xét</button>
             </form>
              </div>
         </div>
