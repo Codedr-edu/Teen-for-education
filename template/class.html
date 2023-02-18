@@ -169,9 +169,8 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                         Chính
                     </p>
                     <ul class="menu-list">
-                        <li><a href="{{url_for('teacher_dashboard'}}" class="is-active">Trang chủ</a></li>
+                        <li><a href="{{url_for('teacher_dashboard')}}" class="is-active">Trang chủ</a></li>
                         <li><a href="{{url_for('show_cls')}}" class="my text-light">Danh sách các lớp</a></li>
-                        <li><a href="{{url_for('teacher_fail_check')}}" class="my text-light">Các lỗi của học sinh</a></li>
                     </ul>
                     <p class="menu-label">
                         Mở rộng
@@ -182,7 +181,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                             <ul>
                                 <li><a href="{{url_for('teacher_homework_check')}}" class="my text-light">BTVN đã giao</a></li>
                                 <li><a href="{{url_for('teacher_comment_check')}}" class="my text-light">Nhận xét học sinh</a></li>
-                                <li><a href="{{url_for('student_fail_add')}}" class="my text-light">Thêm lỗi cho học sinh</a></li>
+                                <li><a href="{{url_for('teacher_fail_check')}}" class="my text-light">Thêm lỗi cho học sinh</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -202,7 +201,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                     <div class="hero-body">
                         <div class="container">
                             <h1 class="title">
-                                Hello, {{current_user.teacher_name}}.
+                                Hello, {{current_user.name}}.
                             </h1>
                             <h2 class="subtitle">
                                 Đây là các nhận xét và phần thưởng mà bạn đã dành cho học sinh
@@ -213,12 +212,29 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                 <div class="container">
                     <br>
                     <div class="columns">
-                        <div class="column"><a href="{{url_for('class_homework')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+                        <div class="column"><a href="{{url_for('class_homework',id=users.cls_id)}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
 background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
 background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm bài tập về nhà</a></div>
                         <div class="column"><a href="{{url_for('add_student')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
 background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
 background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm học sinh</a></div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <a href="{{url_for('student_comment')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Nhận xét</a>
+                        </div>
+                        <div class="column">
+                            <a href="{{url_for('student_fail_add')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm lỗi</a>
+                        </div>
+                        <div class="column">
+                            <a href="{{url_for('delete_student')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Xóa học sinh</a>
+                        </div>
                     </div>
                     <div class="col-md-12 rounded">
                             <table id="data" class="table shadow-lg table-striped rounded" style="background: #76b852;  /* fallback for old browsers */
@@ -229,31 +245,21 @@ backdrop-filter: blur(9.9px);
 -webkit-backdrop-filter: blur(9.9px);">
                                 <thead class="text-light">
                                     <tr class="text-light">
+                                        <th class="text-light">ID</th>
                                         <th class="text-light">Tên học sinh</th>
                                         <th class="text-light">Lớp</th>
                                         <th class="text-light">Email</th>
                                         <th class="text-light">Địa chỉ ví</th>
-                                        <th class="text-light">Chức năng</th>
-                                        <th class="text-light">Thêm lỗi</th>
-                                        <th class="text-light">Xóa học sinh</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-light">
                                     {% for user in users %}
                                         <tr class="text-light">
-                                            <td class="text-light">{{ user.student_name }}</td>
+                                            <td class="text-light">{{user.id}}</td>
+                                            <td class="text-light">{{ user.name }}</td>
                                             <td class="text-light">{{ user.Class }}</td>
                                             <td class="text-light">{{ user.email }}</td>
                                             <td class="text-light">{{ user.address }}</td>
-                                            <td class="text-light"><a href="{{url_for('student_comment',id=user.id)}}" class="btn w-100" style="background: #76b852;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Nhận xét</a></td>
-                                            <td class="text-light"><a href="{{url_for('student_fail_add',id=user.id)}}" class="btn w-100" style="background: #76b852;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm lỗi</a></td>
-                                            <td class="text-light"><a href="{{url_for('delete_student',id=user.id)}}" class="btn w-100" style="background: #76b852;  /* fallback for old browsers */
-background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Xóa</a></td>
                                         </tr>
                                     {% endfor %}
                             </table>
