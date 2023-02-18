@@ -237,10 +237,37 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
                     <div class="columns">
                         <div class="column">
                             <div class="card">
-                        <a href="{{url_for('teacher_homework_check')}}" class="button" style="margin-top:10px;">BTVN đã giao</a><br>
-                        <a href="{{url_for('teacher_comment_check')}}" class="button">Nhận xét học sinh</a><br>
-                        <a href="{{url_for('teacher_fail_check')}}" class="button">Xem lỗi của học sinh</a><br>
-                    </div>
+                                <div class="columns" style="margin-top:10px;">
+                                    <div class="column"><a href="{{url_for('student_comment')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+                                    background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+                                    background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Nhận xét học sinh</a></div>
+                                    <div class="column">
+                                        <a href="{{url_for('student_fail_add')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Thêm lỗi</a>
+                                    </div>
+                                </div>
+                                <div class="columns">
+                                    <div class="column"><a href="{{url_for('delete_student')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+                                                            background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+                                                            background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Xóa học sinh</a></div>
+                                    <div class="column">
+                                        <a href="{{url_for('fail_delete')}}" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Xóa lỗi</a>
+                                    </div>
+                                </div>
+                                  <div class="columns" style="margin-bottom:10px;">
+                                    <div class="column"><a href="https://teenownsystem.pythonanywhere.com" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+                                                            background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+                                                            background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Teenager coin</a></div>
+                                    <div class="column">
+                                        <button onclick="Copylink" class="btn w-100 shadow" style="background: #76b852;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #8DC26F, #76b852);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #8DC26F, #76b852);color:white;">Địa chỉ ví</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -374,18 +401,18 @@ border: 1px solid rgba(255, 255, 255, 0.3);">
     <script async type="text/javascript" src="../js/bulma.js"></script>
     <script>
         function Copylink() {
-  // Get the text field
-  //var copyText = "https://teenownsystem.pythonanywhere.com/teen/{{current_user.id}}" ;
+  Get the text field
+  var copyText = "{{current_user.address}}" ;
 
-  // Select the text field
-  //copyText.select();
-  //copyText.setSelectionRange(0, 99999); // For mobile devices
+  Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
 
-   // Copy the text inside the text field
-  //navigator.clipboard.writeText(copyText.value);
+   Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
 
-  // Alert the copied text
-  //alert("Copied the text: " + copyText.value);
+  Alert the copied text
+  alert("Copied the text: " + copyText.value);
 }
     </script>
 </body>
