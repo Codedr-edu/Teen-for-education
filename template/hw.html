@@ -24,7 +24,7 @@ backdrop-filter: blur(9.9px);
             <br>
             <div class="container">
               <br>
-          <h1 class="text-light title is-1"  style="text-align: center;">Thêm bài tập</h1>
+          <h1 class="text-light title is-1"  style="text-align: center;">Đăng ký</h1>
           <br>
           <div class="card shadow" style="border-radius: 5px; margin: 0 auto; /* Added */
     float: none; /* Added */
@@ -35,16 +35,29 @@ backdrop-filter: blur(9.9px);
 -webkit-backdrop-filter: blur(9.9px);
 border: 1px solid rgba(255, 255, 255, 0.3);">
             <div class="card-body">
-              <form method="POST" action="" enctype="multipart/form-data">
-                {{form.hidden_tag()}}
-                {{wtf.form_field(form.homework)}}
-                <br>
+              <form action="/class/homework/" method="POST" enctype="multipart/form-data">
+                <div class="mb-3 form-group">
+                  <label for="class" class="form-label text-light">ID lớp</label>
+                  <input type="text" class="form-control shadow-lg" id="class" name="class" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="name" class="form-label text-light">Nội dung bài tập</label>
+                  <input type="text" class="form-control shadow-lg" id="name" name="name" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
+                  <div class="mb-3 form-group">
+                  <label for="mark" class="form-label text-light">Điểm</label>
+                  <input type="text" class="form-control shadow-lg" id="mark" name="mark" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
+                <div class="mb-3 form-group">
+                  <label for="present" class="form-label text-light">Số Teen sẽ được thưởng</label>
+                  <input type="text" class="form-control shadow-lg" id="present" name="present" style="background-color:#ecf0f3; width:100%;border-radius:5px ;" />
+                </div>
                 <button type="submit" class="btn text-light shadow"  style="width:100%;
             background: rgba(0, 147, 233, 0.14);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(12.7px);
-            -webkit-backdrop-filter: blur(12.7px);;margin-top: 10px;margin-bottom: 10px;color:#fff;border-radius:5px;">Giao</button>
+            -webkit-backdrop-filter: blur(12.7px);;margin-top: 10px;margin-bottom: 10px;color:#fff;border-radius:5px;">Giao bài</button>
             </form>
              </div>
         </div>
