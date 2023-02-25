@@ -2,7 +2,7 @@
 from flask import Flask, render_template, redirect, url_for, Blueprint, flash, Response, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, FileField, IntegerField, FloatField,TextAreaField,EmailField
+from wtforms import StringField, PasswordField, BooleanField, FileField, IntegerField, FloatField,TextAreaField,EmailField,RadioField,SubmitField
 from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy import *
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -44,6 +44,8 @@ class Teacher(UserMixin,db.Model):
     address = db.Column(db.String, unique=True,nullable=False)
     account_type = db.Column(db.Integer,nullable=False)
     cls_id = db.Column(db.Integer,nullable=False)
+    nick = db.Column(db.String(30),nullable=False)
+    private_key = db.Column(db.String(1000))
     password = db.Column(db.String(80),nullable=False)
     def __repr__(self):
         return '<User {}>'.format(self.name)
@@ -68,6 +70,7 @@ class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grade = db.Column(db.Integer,nullable=False)
     name = db.Column(db.String(10),nullable=False)
+    nick = db.Column(db.String(10),nullable=False)
     #homework = db.relationship('Homework', backref='article', lazy=True)
     """
     def __repr__(self):
@@ -101,6 +104,34 @@ class Fail(db.Model):
     name = db.Column(db.String(1000),nullable=False)
     value = db.Column(db.String(1000),nullable=False)
 
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200),nullable=False)
+    cls = db.Column(db.Integer)
+    cau = db.Column(db.Integer,nullable=False)
+    teacher_id = db.Column(db.Integer,nullable=False)
+    present = db.Column(db.String(1000),nullable=False)
+
+class Score(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    std_id = db.Column(db.Integer,nullable=False)
+    q_id = db.Column(db.Integer,nullable=False)
+    score = db.Column(db.Integer,nullable=False)
+
+
+class Questions(db.Model):
+    q_id = db.Column(db.Integer, primary_key=True)
+    q_no = db.Column(db.Integer,unique=True)
+    ques = db.Column(db.String(350), unique=True)
+    a = db.Column(db.String(100))
+    b = db.Column(db.String(100))
+    c = db.Column(db.String(100))
+    d = db.Column(db.String(100))
+    ans = db.Column(db.String(100))
+
+    def __repr__(self):
+        return '<Question: {}>'.format(self.ques)
+
 @login_manager.user_loader
 def load_user(user_id):
     return Teacher.query.get(int(user_id))
@@ -131,12 +162,25 @@ class change_password(FlaskForm):
 class change_address(FlaskForm):
     address = StringField("Đổi địa cỉ ví")
 
+class QuestionForm(FlaskForm):
+    options = RadioField('Options: ', default=1)
+    submit = SubmitField('Next')
+
+class Quescreate(FlaskForm):
+    name = StringField('Nội dung câu hỏi')
+    a = StringField('Đáp án A')
+    b = StringField('Đáp án B')
+    c = StringField('Đáp án C')
+    d = StringField('Đáp án D')
+    ans = StringField('Đáp án đúng')
+
+
 @app.route('/register/teacher',methods=['GET','POST'])
 def teacher_register():
     if request.method == 'POST':
         email = request.form.get('email')
         name = request.form.get('name')
-        subject = request.form.get('subject')
+        nick = request.form.get('nick')
         password = request.form.get('password')
 
         user = Teacher.query.filter_by(email=email).first()  # Kiểm tra xem người dùng có tồn tại ko
@@ -151,7 +195,7 @@ def teacher_register():
             acct = Account.from_key(private_key)  # tạo ví
             print("Address:", acct.address)
             hashpass = generate_password_hash(password, method='sha256')
-            new_user = Teacher(email=email, address=acct.address, password=hashpass,name=name,account_type=1,cls_id=0)  # tạo user mới
+            new_user = Teacher(email=email, address=acct.address, password=hashpass,name=name,account_type=1,cls_id=0,nick=nick,private_key=private_key)  # tạo user mới
             db.session.add(new_user)  # tạo user 2
             db.session.commit()  # commit user
             login_user(new_user)  # đăng nhập tài khoản
@@ -161,7 +205,7 @@ def teacher_register():
 @login_required
 @app.route('/private/key/<priv>')
 def private_key(priv):
-    return render_template("private_key.html",) # biến trên front-end = biến trên back-end
+    return render_template("private_key.html",priv=priv) # biến trên front-end = biến trên back-end
 
 
 @login_required
@@ -205,28 +249,95 @@ def create_class():
     else:
         return redirect(url_for('student_dashboard'))
     return render_template('add_class.html')
+
 @login_required
 @app.route('/student/comment/',methods=["GET","POST"])
 def student_comment():
     if request.method == 'POST':
         comment = request.form.get('comment')
-        id = request.form.get('id')
+        nick = request.form.get('nick')
         present = request.form.get('present')
         private_key = request.form.get("private")
-        std = Teacher.query.filter_by(id=int(id)).first()
-        test = os.environ[current_user.id + std.id] = private_key  # cho vào biến môi trường để có toàn bộ dữ liệu của private key
-        test2 = os.getenv(current_user.id + std.id)  # lấy dữ liệu từ biến môi trường
+        std = Teacher.query.filter_by(nick=nick).first()
+        test = os.environ["hello"] = private_key  # cho vào biến môi trường để có toàn bộ dữ liệu của private key
+        test2 = os.getenv("hello")  # lấy dữ liệu từ biến môi trường
         new_cmt = Comment(Std_name=std.name, comment=comment, present=str(present), by=current_user.name, std_id=std.id, by_id=current_user.id)
         db.session.add(new_cmt)
         db.session.commit()
-        tran = contract.functions.transfer(std.address, web3.toWei(present, 'ether')).buildTransaction(
-                {'chainId': 11155111, 'gasPrice': web3.toWei('15', 'gwei'), 'gas': 210000,
-                'nonce': web3.eth.get_transaction_count(current_user.address), 'value': 0})  # tạo giao dịch
-        signed_txn = web3.eth.account.sign_transaction(tran, test2)  # xác nhận giao dịch
+        if int(present) > 0:
+            tran = contract.functions.transfer(std.address, web3.toWei(present, 'ether')).buildTransaction(
+                    {'chainId': 11155111, 'gasPrice': web3.toWei('15', 'gwei'), 'gas': 210000,
+                    'nonce': web3.eth.get_transaction_count(current_user.address), 'value': 0})  # tạo giao dịch
+            signed_txn = web3.eth.account.sign_transaction(tran, test2)  # xác nhận giao dịch
+            web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # giao dịch
+            time.sleep(23)
+            return redirect(url_for('teacher_dashboard'))
+        else:
+            return redirect(url_for('teacher_dashboard'))
+    return render_template('cmt.html')
+
+@login_required
+@app.route('/question/<int:q_id>/<int:id>', methods=['GET', 'POST'])
+def question(id,q_id):
+    form = QuestionForm()
+    q = Questions.query.filter_by(q_no=id,q_id=q_id).first()
+    if not q:
+        return redirect(url_for('score',id=q.q_id,right=int(os.getenv(str(q.q_id)+str(current_user.id)))))
+    if request.method == 'POST':
+        option = request.form['options']
+        if option == q.ans:
+            os.environ[str(q.q_id)+str(current_user.id)] += 1
+        return redirect(url_for('question',q_id=q_id, id=(id+1)))
+    form.options.choices = [(q.a, q.a), (q.b, q.b), (q.c, q.c), (q.d, q.d)]
+    return render_template('question.html', form=form, q=q, title='Question {}'.format(id))
+
+@login_required
+@app.route('/score/<int:id>/<int:right>')
+def score(id,right):
+    q = Quiz.query.filer_by(id=id).first()
+    teacher = Teacher.query.filter_by(id=q.teacher_id).first()
+    final = Score(std_id=current_user.id,q_id=q.id,score=right/q.cau*10)
+    db.session.add(final)
+    db.session.commit()
+    if right/q.present*10 > 0:
+        os.environ[str(q.id)+str(teacher.id)] = teacher.private_key
+        test = os.getenv(str(q.id)+str(teacher.id))
+        tran = contract.functions.transfer_form(teacher.address,current_user.address, web3.toWei(right/q.present*10, 'ether')).buildTransaction(
+            {'chainId': 11155111, 'gasPrice': web3.toWei('15', 'gwei'), 'gas': 210000,
+             'nonce': web3.eth.get_transaction_count(teacher.address), 'value': 0})  # tạo giao dịch
+        signed_txn = web3.eth.account.sign_transaction(tran, test)  # xác nhận giao dịch
         web3.eth.send_raw_transaction(signed_txn.rawTransaction)  # giao dịch
         time.sleep(23)
-        return redirect(url_for('dashboard'))
-    return render_template('cmt.html')
+    return render_template('score.html', score=right/q.cau*10)
+
+@login_required
+@app.route('/create/quiz',methods=['GET','POST'])
+def create_quiz():
+    if request.methos == 'POST':
+        name = request.form.get('name')
+        cau = request.form.get('cau')
+        present = request.form.get('present')
+        cls = request.form.get('cls')
+        q = Quiz.query.filer_by(name=name).first()
+        new_quiz = Quiz(name=name,cls=cls,cau=cau,present=present)
+        db.session.add(new_quiz)
+        db.session.commit()
+        return redirect(url_for('create_question',id=cau,q_id=q.id))
+    return render_template('quiz.html')
+
+@login_required
+@app.route('/create/question/<int:id>/<int:qi_d>',methods=['GET','POST'])
+def create_question(id,q_id):
+    form = Quescreate()
+    if id != 0:
+        if form.validate_on_submit():
+            new_quest = Questions(name=form.name.data,q_id=q_id,q_no=id,ans=form.ans.data,a=form.a.data,b=form.b.data,c=form.c.data,d=form.d.data)
+            db.session.add(new_quest)
+            db.session.commit()
+            return redirect(url_for('create_question',id=id-1,q_id=q_id))
+    else:
+        return redirect(url_for('teacher_dashboard'))
+    return render_template('ques_create.html',form=form)
 
 @login_required
 @app.route('/class/homework/',methods = ['GET','POST'])
@@ -237,7 +348,7 @@ def class_homework():
         mark = request.form.get('mark')
         present = request.form.get('present')
         cls = Class.query.filter_by(id=int(css)).first()
-        new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), class_id=cls.id,by=current_user.name,by_id=current_user.id)
+        new_hwk = Homework(Class=cls.name, name=name, mark=mark, present=str(present), cls_id=cls.id,by=current_user.name,by_id=current_user.id)
         db.session.add(new_hwk)
         db.session.commit()
     return render_template('hw.html')
@@ -246,20 +357,21 @@ def class_homework():
 @app.route('/student/fail/',methods=['GET','POST'])
 def student_fail_add():
     if request.method == 'POST':
-        id = request.form.get(id)
+        nick = request.form.get('nick')
         name = request.form.get('name')
         value = request.form.get('value')
-        std = Teacher.query.filter_by(id=int(id)).first()
-        fail = Fail(Std_name=std.name,Std_id=id,name=name,value=value)
+        std = Teacher.query.filter_by(nick=nick).first()
+        fail = Fail(std_name=std.name,std_id=std.id,name=name,value=value)
         db.session.add(fail)
         db.session.commit()
+        return redirect(url_for("teacher_dashboard"))
     return render_template("fail.html")
 
 @login_required
 @app.route('/student/fail/id/<std_id>')
 def fail_id(std_id):
     if current_user.account_type == 1:
-        fail = Fail.query.filter(std_id=std_id).all()
+        fail = Fail.query.filter_by(std_id=std_id).all()
         final_fail = fail[-1].id
     else:
         return redirect(url_for('student_dashboard'))
@@ -269,8 +381,8 @@ def fail_id(std_id):
 @app.route('/student/fail/delete',methods=['GET','POST'])
 def fail_delete():
     if request.method == 'POST':
-        id = request.form.get("id")
-        fail = Fail.query.filter_by(id=int(id)).first()
+        nick = request.form.get("nick")
+        fail = Fail.query.filter_by(nick=nick).first()
         fail2 = Teacher.query.filter_by(std_id=fail.std_id).first()
         fail.delete()
         db.session.commit()
@@ -287,7 +399,7 @@ def teacher_login():
 
         if not user or not check_password_hash(user.password, password):# check tài khoản và pass có đúng ko
             flash('Please check your login details and try again.') # trả về kết quả và reload khi có tồn tại ng dùng
-            return redirect(url_for('login'))
+            return redirect(url_for('teacher_login'))
         else:
             login_user(user)# đăng nhập tài khoản
             return redirect(url_for('teacher_dashboard'))
@@ -304,7 +416,7 @@ def student_login():
 
         if not user or not check_password_hash(user.password, password):# check tài khoản và pass có đúng ko
             flash('Please check your login details and try again.') # trả về kết quả và reload khi có tồn tại ng dùng
-            return redirect(url_for('login'))
+            return redirect(url_for('student_login'))
         else:
             login_user(user)# đăng nhập tài khoản
             return redirect(url_for('student_dashboard'))
@@ -321,8 +433,9 @@ def add_student():
             address = request.form.get('address')
             password = request.form.get('password')
             cls_id = request.form.get('Cls_id')
-
-            new_student = Teacher(name=name, email=email, address=address, password=password, cls_id=cls_id,account_type=2)
+            nick = request.form.get('nick')
+            hashpass = generate_password_hash(password, method='sha256')
+            new_student = Teacher(name=name, email=email, address=address, password=hashpass, cls_id=cls_id, nick=nick, account_type=2)
             db.session.add(new_student)
             db.session.commit()
     else:
@@ -333,12 +446,10 @@ def add_student():
 @app.route('/delete/student',methods=['GET','POST'])
 def delete_student():
     if request.method == 'POST':
-        id = request.form.get('id')
-        std = Teacher.query.filter_by(id=int(id)).first()
-        std2 = std.cls_id
-        std.delete()
+        nick = request.form.get('nick')
+        Teacher.query.filter_by(nick=nick).delete()
         db.session.commit()
-        return redirect(url_for('class_check',id=std2))
+        return redirect(url_for('teacher_dashboard'))
     return render_template('delete.html')
 
 
@@ -377,7 +488,7 @@ def teacher_change_address():
 def student_homework_check():
     if current_user.account_type == 2:
         std = current_user.cls_id
-        hw = Homework.query.filter(cls_id=std).all()
+        hw = Homework.query.filter_by(cls_id=std).all()
         hwk = hw[::-1]
     else:
         return redirect(url_for('teacher_dashboard'))
@@ -388,7 +499,7 @@ def student_homework_check():
 def teacher_homework_check():
     if current_user.account_type == 1:
         std = current_user.id
-        hw = Homework.query.filter(by_id=std).all()
+        hw = Homework.query.filter_by(by_id=std).all()
         hwk = hw[::-1]
     else:
         return redirect(url_for('student_dashboard'))
@@ -397,12 +508,9 @@ def teacher_homework_check():
 @login_required
 @app.route('/student/comment/check')
 def student_comment_check():
-    if current_user.account_type == 2:
-        std = current_user.id
-        hw = Comment.query.filter(std_id=std).all()
-        hwk = hw[::-1]
-    else:
-        return redirect(url_for('teacher_dashboard'))
+    std = current_user.id
+    hw = Comment.query.filter_by(std_id=std).all()
+    hwk = hw[::-1]
     return render_template("student_comment.html",posts=hwk)
 
 @login_required
@@ -410,7 +518,7 @@ def student_comment_check():
 def teacher_comment_check():
     if current_user.account_type == 1:
         std = current_user.id
-        hw = Comment.query.filter(by_id=std).all()
+        hw = Comment.query.filter_by(by_id=std).all()
         hwk = hw[::-1]
     else:
         return redirect(url_for('student_dashboard'))
@@ -421,7 +529,7 @@ def teacher_comment_check():
 def student_fail_check():
     if current_user.account_type == 2:
         std = current_user.id
-        hw = Fail.query.filter(std_id=std).all()
+        hw = Fail.query.filter_by(std_id=std).all()
         hwk = hw[::-1]
     else:
         return redirect(url_for('teacher_dashboard'))
